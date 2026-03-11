@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriMarket Cameroon</title>
+<!-- Font Awesome pour icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif;}
+    body {line-height:1.6; background:#f9f9f9;}
+
+    /* NAVBAR */
+    nav {
+        display:flex; justify-content:space-between; align-items:center;
+        padding:15px 30px; background:#2e7d32; color:white; position: sticky; top:0; z-index:100;
+    }
+    nav .logo {
+        display:flex; align-items:center; font-weight:bold; font-size:1.5rem;
+    }
+    nav .logo img {
+        width:40px; height:40px; margin-right:10px;
+    }
+    nav ul {list-style:none; display:flex;}
+    nav ul li {margin-left:20px;}
+    nav ul li a {text-decoration:none; color:white; font-weight:bold; transition:0.3s;}
+    nav ul li a:hover {color:#c8e6c9;}
+    nav ul li a i {margin-right:5px;}
+
+    /* HERO / CARROUSEL */
+    .hero {
+        position:relative; overflow:hidden; height:80vh; display:flex; align-items:center; justify-content:center;
+    }
+    .slides {
+        display:flex; width:300%; height:100%;
+        animation: slide 15s infinite;
+    }
+    .slide {
+        width:100%; flex-shrink:0;
+        background-size:cover; background-position:center;
+        display:flex; flex-direction:column; justify-content:center; align-items:center;
+        color:white; text-align:center; padding:20px;
+        text-shadow:2px 2px 6px rgba(0,0,0,0.6);
+    }
+    .slide h2 {font-size:3rem; margin-bottom:20px;}
+    .slide p {font-size:1.3rem; margin-bottom:30px;}
+    .slide a {
+        padding:15px 30px; background:#81c784; color:white; text-decoration:none; border-radius:8px; font-weight:bold; transition:0.3s;
+    }
+    .slide a:hover {background:#66bb6a; transform:translateY(-3px);}
+
+    @keyframes slide {
+        0% {transform:translateX(0%);}
+        33% {transform:translateX(-100%);}
+        66% {transform:translateX(-200%);}
+        100% {transform:translateX(0%);}
+    }
+
+    /* SECTIONS */
+    section {padding:60px 20px; text-align:center;}
+    section h3 {font-size:2rem; margin-bottom:30px; color:#2e7d32;}
+    .features {
+        display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:30px; max-width:1000px; margin:0 auto;
+    }
+    .feature-box {
+        background:white; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); transition:0.3s;
+    }
+    .feature-box:hover {transform:translateY(-5px); box-shadow:0 8px 15px rgba(0,0,0,0.2);}
+    .feature-box i {font-size:2rem; color:#2e7d32; margin-bottom:15px;}
+    .feature-box p {font-size:1.1rem;}
+
+    /* FOOTER */
+    footer {background:#2e7d32; color:white; text-align:center; padding:25px; margin-top:20px;}
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+        nav ul {flex-direction:column; margin-top:10px;}
+        nav ul li {margin-left:0; margin-top:10px;}
+        .slide h2 {font-size:2rem;}
+        .slide p {font-size:1rem;}
+    }
+</style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="logo">
+            <img src="assets/logo2.png" alt="Logo AgriMarket">
+            AgriMarket Cameroon
+        </div>
+        <ul>
+            <li><a href="#"><i class="fas fa-home"></i>Accueil</a></li>
+            <li><a href="#about"><i class="fas fa-info-circle"></i>À propos</a></li>
+            <li><a href="login.html"><i class="fas fa-sign-in-alt"></i>Se connecter</a></li>
+            <li><a href="register.html"><i class="fas fa-user-plus"></i>S'inscrire</a></li>
+            <li><a href="catalogue.html"><i class="fas fa-tachometer-alt"></i>Catalogue</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-user"></i>Tableau de bord</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO / CARROUSEL -->
+    <div class="hero">
+        <div class="slides">
+
+            <div class="slide" style="background-image:url('https://plus.unsplash.com/premium_photo-1661820236982-9199611de9dd?q=80&w=1145&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                <h2>Produits frais directement des fermes</h2>
+                <p>Achetez et vendez des produits agricoles locaux facilement.</p>
+                <a href="register.html">Commencer</a>
+            </div>
+            <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1461354464878-ad92f492a5a0?q=80&w=1170&auto=format&fit=crop&ixlib=rb');">
+                <h2>Connectez agriculteurs et acheteurs</h2>
+                <p>Une plateforme sécurisée pour des transactions simples et rapides.</p>
+                <a href="register.html">S'inscrire maintenant</a>
+            </div>
+            <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+                <h2>Boostez votre commerce agricole</h2>
+                <p> Gérez vos produits et vos commandes directement en ligne ou lors de rencontres.</p>
+                <a href="register.html">Découvrir</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- À propos -->
+    <section id="about">
+        <h3>À propos de nous</h3>
+        <p>AgriMarket Cameroon met en relation agriculteurs et acheteurs pour un commerce simple, sécurisé et rapide.</p>
+        <p>Nous facilitons l’accès au marché pour les producteurs locaux, sécuriser leurs revenus et promouvoir une agriculture durable et responsable.</p>
+    </section>
+
+    <!-- Fonctionnalités -->
+    <section>
+        <h3>Nos fonctionnalités</h3>
+        <div class="features">
+            <div class="feature-box">
+                <i class="fas fa-user"></i>
+                <p>Gestion des comptes utilisateurs</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-carrot"></i>
+                <p>Publication et gestion des produits agricoles</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-search"></i>
+                <p>Recherche et consultation des produits</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Passation de commandes et paiement sécurisé</p>
+            </div>
+
+            <div class="feature-box">
+                <i class="fas fa-handshake"></i> <!-- icône pour rencontre / connexion -->
+                <p>Rencontre acheteur-agriculteur</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-bell"></i>
+                <p>Notifications et communication</p>
+            </div>
+            <div class="feature-box">
+                <i class="fas fa-cogs"></i>
+                <p>Interface administrateur</p>
+            </div>
+            
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; 2026 AgriMarket Cameroon - Tous droits réservés
+    </footer>
+
+</body>
+</html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

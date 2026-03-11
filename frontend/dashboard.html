@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard AgriMarket</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f0f2f5; margin:0; padding:0; }
+header { background:#28a745; color:#fff; padding:15px; text-align:center; }
+.container { max-width:1000px; margin:auto; padding:20px; }
+h2,h3 { color:#28a745; }
+form { background:#fff; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; }
+form input, form button { width:100%; padding:12px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
+form button { background:#28a745; color:#fff; border:none; cursor:pointer; transition:0.3s; }
+form button:hover { background:#218838; }
+.filters { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.filters input { flex:1; padding:10px; border-radius:5px; border:1px solid #ccc; }
+.products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:15px; }
+.product { background:#fff; padding:15px; border-radius:8px; box-shadow:0 3px 10px rgba(0,0,0,0.1); display:flex; flex-direction:column; justify-content:space-between; }
+.product h3 { margin:0 0 5px 0; color:#28a745; }
+.product button { margin-top:5px; padding:5px 10px; border:none; border-radius:5px; cursor:pointer; color:#fff; }
+.product button.edit { background:#ffc107; }
+.product button.delete { background:#dc3545; }
+.product button.edit:hover { background:#e0a800; }
+.product button.delete:hover { background:#a71d2a; }
+
+/* Modal popup */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+.modal-content { background:#fff; padding:20px; border-radius:10px; max-width:400px; width:100%; position:relative; }
+.modal-content h3 { margin-top:0; }
+.close { position:absolute; top:10px; right:10px; font-size:20px; cursor:pointer; }
+@media(max-width:600px){
+    .filters { flex-direction:column; }
+    form input, form button { font-size:0.9rem; }
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>Bienvenue sur AgriMarket Cameroon</h1>
+</header>
+
+<div class="container">
+    <h2 id="roleTitle"></h2>
+
+    <!-- Section ajout produit pour agriculteur -->
+    <div id="addProductSection" style="display:none;">
+        <h3>Ajouter un produit</h3>
+        <form id="addProductForm">
+            <input type="text" id="nom" placeholder="Nom du produit" required>
+            <input type="number" id="prix" placeholder="Prix (FCFA)" required>
+            <input type="number" id="quantite" placeholder="Quantité" required>
+            <input type="text" id="localisation" placeholder="Localisation">
+            <button type="submit">Ajouter le produit</button>
+        </form>
+    </div>
+
+    <!-- Filtres pour acheteur -->
+    <div id="filters" class="filters" style="display:none;">
+        <input type="text" id="filterLocalisation" placeholder="Filtrer par localisation">
+        <input type="number" id="filterPrix" placeholder="Prix maximum (FCFA)">
+        <button onclick="applyFilters()">Filtrer</button>
+        <button onclick="resetFilters()">Réinitialiser</button>
+    </div>
+
+    <h3>Liste des produits</h3>
+    <div id="products" class="products-grid"></div>
+</div>
+
+<!-- Modal modification produit -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Modifier le produit</h3>
+        <form id="editForm">
+            <input type="text" id="editNom" placeholder="Nom du produit" required>
+            <input type="number" id="editPrix" placeholder="Prix" required>
+            <input type="number" id="editQuantite" placeholder="Quantité" required>
+            <input type="text" id="editLocalisation" placeholder="Localisation">
+            <button type="submit">Enregistrer les modifications</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const API_URL = "http://localhost:3000/api/products";
+let user = JSON.parse(localStorage.getItem('user'));
+if(!user){ alert("Connectez-vous !"); window.location.href="login.html"; }
+
+document.getElementById('roleTitle').innerText = 
+    user.role === 'agriculteur' ? "Tableau de bord Agriculteur" : "Catalogue Acheteur";
+
+if(user.role === 'agriculteur'){
+    document.getElementById('addProductSection').style.display="block";
+} else {
+    document.getElementById('filters').style.display="flex";
+}
+
+// Ajouter produit
+if(user.role === 'agriculteur'){
+    document.getElementById('addProductForm').addEventListener('submit', async e=>{
+        e.preventDefault();
+        const data = {
+            nom: document.getElementById('nom').value.trim(),
+            prix: parseFloat(document.getElementById('prix').value),
+            quantite: parseInt(document.getElementById('quantite').value),
+            localisation: document.getElementById('localisation').value.trim(),
+            user_id: user.id
+        };
+        if(!data.nom || !data.prix || !data.quantite){ alert("Remplir tous les champs"); return; }
+        try{
+            const res = await fetch(`${API_URL}/add`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+            const result = await res.json();
+            alert(result.message);
+            loadProducts();
+        } catch(err){ console.error(err); alert("Erreur serveur"); }
+    });
+}
+
+// Charger produits
+let allProducts = [];
+async function loadProducts(){
+    try{
+        let url = API_URL;
+        if(user.role==='agriculteur') url+=`/my/${user.id}`;
+        const res = await fetch(url);
+        const products = await res.json();
+        allProducts = products;
+        displayProducts(products);
+    } catch(err){ console.error(err); alert("Impossible de charger les produits"); }
+}
+
+function displayProducts(products){
+    const container = document.getElementById('products');
+    container.innerHTML='';
+    products.forEach(p=>{
+        const div = document.createElement('div'); div.classList.add('product');
+        let html = `<h3>${p.nom} - ${p.prix} FCFA</h3>
+                    <p>Quantité: ${p.quantite}</p>
+                    <p>Localisation: ${p.localisation || '-'}</p>`;
+        if(user.role==='acheteur'){ html+=`<p>Agriculteur: ${p.agriculteur}</p>`; }
+        if(user.role==='agriculteur'){
+            html += `<button class="edit" onclick="openModal(${p.id},'${p.nom}',${p.prix},${p.quantite},'${p.localisation}')">Modifier</button>
+                     <button class="delete" onclick="deleteProduct(${p.id})">Supprimer</button>`;
+        }
+        div.innerHTML = html;
+        container.appendChild(div);
+    });
+}
+
+// Supprimer produit
+async function deleteProduct(id){
+    if(!confirm("Supprimer ce produit ?")) return;
+    try{
+        const res = await fetch(`${API_URL}/delete/${id}`, {method:'DELETE'});
+        const result = await res.json();
+        alert(result.message);
+        loadProducts();
+    } catch(err){ console.error(err); alert("Erreur serveur"); }
+}
+
+// Modal modification
+let editId = null;
+function openModal(id, nom, prix, quantite, localisation){
+    editId = id;
+    document.getElementById('editNom').value = nom;
+    document.getElementById('editPrix').value = prix;
+    document.getElementById('editQuantite').value = quantite;
+    document.getElementById('editLocalisation').value = localisation;
+    document.getElementById('modal').style.display='flex';
+}
+
+function closeModal(){ document.getElementById('modal').style.display='none'; }
+
+// Enregistrer modifications
+document.getElementById('editForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const data = {
+        nom: document.getElementById('editNom').value.trim(),
+        prix: parseFloat(document.getElementById('editPrix').value),
+        quantite: parseInt(document.getElementById('editQuantite').value),
+        localisation: document.getElementById('editLocalisation').value.trim()
+    };
+    try{
+        const res = await fetch(`${API_URL}/update/${editId}`, {
+            method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
+        });
+        const result = await res.json();
+        alert(result.message);
+        closeModal();
+        loadProducts();
+    } catch(err){ console.error(err); alert("Erreur serveur"); }
+});
+
+// Filtres acheteurs
+function applyFilters(){
+    let filtered = [...allProducts];
+    const loc = document.getElementById('filterLocalisation').value.toLowerCase().trim();
+    const prixMax = parseFloat(document.getElementById('filterPrix').value);
+    if(loc) filtered = filtered.filter(p=>p.localisation.toLowerCase().includes(loc));
+    if(!isNaN(prixMax)) filtered = filtered.filter(p=>p.prix<=prixMax);
+    displayProducts(filtered);
+}
+
+function resetFilters(){
+    document.getElementById('filterLocalisation').value='';
+    document.getElementById('filterPrix').value='';
+    displayProducts(allProducts);
+}
+
+loadProducts();
+</script>
+</body>
+</html>
+
+
+

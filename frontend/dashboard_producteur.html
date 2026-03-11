@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard Producteur — AgriMarket Cameroon</title>
+  <style>
+    :root{
+      --bg1:#071423; --bg2:#0b1f2f;
+      --card: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text:#eef6ff; --muted:#b9c7de;
+      --green:#22c55e; --green2:#16a34a; --yellow:#fbbf24; --red:#ff5d5d;
+    }
+    *{box-sizing:border-box; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+    body{
+      margin:0; color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(34,197,94,.22), transparent 55%),
+        radial-gradient(800px 500px at 85% 30%, rgba(251,191,36,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: rgba(7,20,35,.72);
+      border-bottom:1px solid var(--stroke);
+    }
+    .topbar{
+      max-width:1100px; margin:0 auto;
+      padding:14px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900;}
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background: linear-gradient(180deg, var(--green), var(--green2));
+      display:grid; place-items:center; color:#062012; font-weight:900;
+    }
+    .btn{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px; border-radius:12px;
+      font-weight:800; cursor:pointer;
+    }
+    .btn.primary{border:none; background:linear-gradient(180deg,var(--green),var(--green2)); color:#052012;}
+    .wrap{max-width:1100px; margin:0 auto; padding:18px;}
+    h1{margin:16px 0 6px; font-size:28px}
+    .muted{color:var(--muted); line-height:1.5}
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:12px;
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.07);
+      border-radius:18px;
+      padding:14px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.25);
+    }
+    .kpi{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .kpi .n{font-size:26px; font-weight:1000}
+    .pill{
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color:rgba(238,246,255,.85);
+      font-weight:800; font-size:12px; white-space:nowrap;
+    }
+    .bar{
+      height:10px; border-radius:999px;
+      background: rgba(255,255,255,.10);
+      overflow:hidden; margin-top:10px;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .bar > div{height:100%; width:0%;}
+    .b-green{background:linear-gradient(90deg,var(--green),var(--green2));}
+    .b-yellow{background:linear-gradient(90deg,var(--yellow),#f59e0b);}
+    .b-red{background:linear-gradient(90deg,var(--red),#ff8a8a);}
+
+    table{width:100%; border-collapse:collapse; margin-top:10px; font-size:14px;}
+    th, td{padding:10px 8px; border-bottom:1px solid rgba(255,255,255,.10); text-align:left;}
+    th{color:rgba(238,246,255,.85); font-size:12px; text-transform:uppercase; letter-spacing:.08em;}
+    .tag{font-weight:900; font-size:12px; padding:6px 10px; border-radius:999px; display:inline-block}
+    .t-wait{background: rgba(251,191,36,.15); border:1px solid rgba(251,191,36,.35); color:#ffe8b0;}
+    .t-ok{background: rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.35); color:#bfffd8;}
+    .t-no{background: rgba(255,93,93,.15); border:1px solid rgba(255,93,93,.35); color:#ffd0d0;}
+
+    /* ✅ Responsive */
+    @media (max-width: 900px){
+      .topbar{flex-wrap:wrap}
+      .grid{grid-template-columns: 1fr; }
+      .col-4, .col-6, .col-8, .col-12{grid-column:auto !important;}
+      table{font-size:13px;}
+    }
+    @media (min-width: 901px){
+      .col-4{grid-column: span 4;}
+      .col-6{grid-column: span 6;}
+      .col-8{grid-column: span 8;}
+      .col-12{grid-column: span 12;}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">A</div>
+      <div>
+        <div style="opacity:.85; font-size:13px;">AgriMarket Cameroon</div>
+        <div style="font-weight:1000;">Dashboard Producteur</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn" onclick="location.href='catalogue.html'">Catalogue</button>
+      <button class="btn" onclick="location.href='demandes.html'">Demandes</button>
+      <button class="btn primary" onclick="location.reload()">Actualiser</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Vue d’ensemble</h1>
+  <p class="muted">Statistiques de vos produits et des demandes de rencontre (en temps réel via l’API).</p>
+
+  <div class="grid">
+    <div class="card col-4">
+      <div class="kpi">
+        <div>
+          <div class="muted">Produits publiés</div>
+          <div class="n" id="kpiProducts">—</div>
+        </div>
+        <span class="pill">Catalogue</span>
+      </div>
+      <div class="bar"><div id="barProducts" class="b-green"></div></div>
+    </div>
+
+    <div class="card col-4">
+      <div class="kpi">
+        <div>
+          <div class="muted">Rencontres (total)</div>
+          <div class="n" id="kpiTotal">—</div>
+        </div>
+        <span class="pill">Demandes</span>
+      </div>
+      <div class="bar"><div id="barTotal" class="b-yellow"></div></div>
+    </div>
+
+    <div class="card col-4">
+      <div class="kpi">
+        <div>
+          <div class="muted">En attente</div>
+          <div class="n" id="kpiPending">—</div>
+        </div>
+        <span class="pill">À traiter</span>
+      </div>
+      <div class="bar"><div id="barPending" class="b-red"></div></div>
+    </div>
+
+    <div class="card col-6">
+      <b>Répartition des statuts</b>
+      <div class="muted" style="margin-top:6px;">Acceptées / Refusées / En attente</div>
+
+      <div style="margin-top:10px; display:grid; gap:10px;">
+        <div>
+          <div class="kpi" style="justify-content:space-between;">
+            <span class="muted">Acceptées</span>
+            <span class="pill" id="vOk">—</span>
+          </div>
+          <div class="bar"><div id="barOk" class="b-green"></div></div>
+        </div>
+        <div>
+          <div class="kpi" style="justify-content:space-between;">
+            <span class="muted">Refusées</span>
+            <span class="pill" id="vNo">—</span>
+          </div>
+          <div class="bar"><div id="barNo" class="b-red"></div></div>
+        </div>
+        <div>
+          <div class="kpi" style="justify-content:space-between;">
+            <span class="muted">En attente</span>
+            <span class="pill" id="vWait">—</span>
+          </div>
+          <div class="bar"><div id="barWait" class="b-yellow"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card col-6">
+      <b>Dernières demandes de rencontre</b>
+      <div class="muted" style="margin-top:6px;">Les 5 plus récentes.</div>
+      <div id="recentWrap"></div>
+    </div>
+  </div>
+
+  <p class="muted" id="status" style="margin-top:14px;"></p>
+</main>
+
+<script>
+  const API = "http://localhost:3000/api";
+  // ✅ idéal: récupérer le producteur connecté
+  const userId = Number(localStorage.getItem("user_id")) || 1;
+
+  function pct(part, total){
+    if (!total || total <= 0) return 0;
+    return Math.max(0, Math.min(100, Math.round((part/total)*100)));
+  }
+
+  function tag(statut){
+    if (statut === "Acceptée") return `<span class="tag t-ok">Acceptée</span>`;
+    if (statut === "Refusée") return `<span class="tag t-no">Refusée</span>`;
+    return `<span class="tag t-wait">En attente</span>`;
+  }
+
+  async function load() {
+    const status = document.getElementById("status");
+    status.textContent = "Chargement…";
+
+    try {
+      const res = await fetch(`${API}/dashboard/producer/${userId}`);
+      if (!res.ok) {
+        const txt = await res.text();
+        status.textContent = `Erreur API (${res.status})`;
+        console.error(txt);
+        return;
+      }
+
+      const data = await res.json();
+
+      const nbP = data.nb_produits ?? 0;
+      const r = data.rencontres ?? { total: 0, en_attente: 0, acceptees: 0, refusees: 0 };
+
+      document.getElementById("kpiProducts").textContent = nbP;
+      document.getElementById("kpiTotal").textContent = r.total ?? 0;
+      document.getElementById("kpiPending").textContent = r.en_attente ?? 0;
+
+      // barres (petit visuel)
+      document.getElementById("barProducts").style.width = `${Math.min(100, nbP * 10)}%`;
+      document.getElementById("barTotal").style.width = `${Math.min(100, (r.total ?? 0) * 10)}%`;
+      document.getElementById("barPending").style.width = `${Math.min(100, (r.en_attente ?? 0) * 10)}%`;
+
+      // répartition
+      document.getElementById("vOk").textContent = r.acceptees ?? 0;
+      document.getElementById("vNo").textContent = r.refusees ?? 0;
+      document.getElementById("vWait").textContent = r.en_attente ?? 0;
+
+      const total = r.total ?? 0;
+      document.getElementById("barOk").style.width = `${pct(r.acceptees ?? 0, total)}%`;
+      document.getElementById("barNo").style.width = `${pct(r.refusees ?? 0, total)}%`;
+      document.getElementById("barWait").style.width = `${pct(r.en_attente ?? 0, total)}%`;
+
+      // tableau dernières demandes
+      const recent = data.recent_rencontres ?? [];
+      const recentWrap = document.getElementById("recentWrap");
+      if (!recent.length) {
+        recentWrap.innerHTML = `<p class="muted" style="margin-top:10px;">Aucune demande récente.</p>`;
+      } else {
+        recentWrap.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Produit</th>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${recent.map(x => `
+                <tr>
+                  <td>${x.produit ?? "-"}</td>
+                  <td>${x.client_nom ?? "-"}</td>
+                  <td>${x.date_rencontre ?? "-"}</td>
+                  <td>${tag(x.statut)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      status.textContent = `Données chargées pour user_id=${userId}.`;
+    } catch (e) {
+      console.error(e);
+      status.textContent = "Impossible de contacter l’API.";
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Notifications</title>
+  <style>
+    body{font-family:Arial;margin:0;background:#0b1f2f;color:#eef6ff;}
+    header{padding:16px 18px;background:#071423;border-bottom:1px solid rgba(255,255,255,.12);}
+    .wrap{max-width:900px;margin:0 auto;padding:18px;}
+    .n{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);border-radius:14px;padding:12px;margin:10px 0;}
+    .muted{color:#b9c7de}
+    .btn{margin-top:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#eef6ff;padding:8px 10px;border-radius:12px;font-weight:700;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <header><b>Notifications</b></header>
+  <div class="wrap">
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const API = "http://localhost:3000/api";
+    const userId = Number(localStorage.getItem("user_id")) || 1;
+
+    async function loadNotifs(){
+      const res = await fetch(`${API}/notifications/${userId}`);
+      const data = await res.json();
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      if (!Array.isArray(data) || data.length === 0){
+        list.innerHTML = `<p class="muted">Aucune notification.</p>`;
+        return;
+      }
+
+      data.forEach(n => {
+        const div = document.createElement("div");
+        div.className = "n";
+        div.innerHTML = `
+          <b>${n.titre}</b>
+          <div class="muted">${n.message}</div>
+          <div class="muted">Date: ${n.created_at} • ${n.is_read ? "Lue" : "Non lue"}</div>
+          ${n.is_read ? "" : `<button class="btn">Marquer comme lue</button>`}
+        `;
+        const btn = div.querySelector(".btn");
+        if(btn){
+          btn.onclick = async () => {
+            await fetch(`${API}/notifications/read/${n.id}`, { method:"PUT" });
+            loadNotifs();
+          };
+        }
+        list.appendChild(div);
+      });
+    }
+
+    loadNotifs();
+  </script>
+</body>
+</html>

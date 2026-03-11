@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajouter Produit</title>
+<style>
+body {font-family:Arial; padding:20px; background:#f2f2f2;}
+.container {max-width:400px; margin:0 auto; background:white; padding:20px; border-radius:10px;}
+input, textarea {width:100%; margin:10px 0; padding:10px; border-radius:5px; border:1px solid #ccc;}
+button {padding:10px; width:100%; background:#2e7d32; color:white; border:none; border-radius:5px; cursor:pointer;}
+button:hover {background:#66bb6a;}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Ajouter un produit</h2>
+    <form id="addProductForm">
+    <input type="text" id="nom" placeholder="Nom du produit" required>
+    <input type="number" id="prix" placeholder="Prix" required>
+    <input type="number" id="quantite" placeholder="Quantité" required>
+    <input type="text" id="localisation" placeholder="Localisation">
+    <button type="submit">Ajouter</button>
+</form>
+
+<script>
+const API_URL = "http://localhost:3000/api/products";
+const userId = 1; // ID de l'utilisateur connecté
+
+document.getElementById('addProductForm').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const data = {
+        nom: document.getElementById('nom').value,
+        prix: document.getElementById('prix').value,
+        quantite: document.getElementById('quantite').value,
+        localisation: document.getElementById('localisation').value,
+        user_id: userId
+    };
+
+    try {
+        const res = await fetch(`${API_URL}/add`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        alert(result.message);
+    } catch(err) {
+        console.error(err);
+        alert("Erreur serveur");
+    }
+});
+</script>
+
+</div>
+
+</body>
+</html>

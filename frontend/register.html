@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription AgriMarket Cameroon</title>
+   <style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+/* Background plein écran */
+body {
+    background-image: url('assets/Accueil.png'); /* 🔴 ton image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Effet glassmorphism */
+form {
+    width: 330px;
+    padding: 30px;
+
+    background: rgba(255, 255, 255, 0.2); /* transparence */
+    backdrop-filter: blur(12px);         /* 🔥 effet flou */
+    -webkit-backdrop-filter: blur(12px);
+
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+
+    color: #fff;
+}
+
+form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Champs */
+form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+/* Bouton */
+form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #43a047;
+}
+</style>
+
+</head>
+<body>
+
+    <section class="register-section">
+
+  <div class="register-overlay"></div>
+
+  <div class="register-card">
+    <h2>Créer un Compte</h2>
+
+<form id="registerForm">
+    <input type="text" id="nom" placeholder="Nom" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="text" id="telephone" placeholder="Téléphone">
+    <input type="password" id="mot_de_passe" placeholder="Mot de passe" required>
+    <select id="role" required>
+        <option value="">Choisir le rôle</option>
+        <option value="agriculteur">Agriculteur</option>
+        <option value="acheteur">Acheteur</option>
+    </select>
+    <button type="submit">S'inscrire</button>
+</form>
+
+<script>
+const API_URL = "http://localhost:3000/api/users";
+
+document.getElementById('registerForm').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const data = {
+        nom: document.getElementById('nom').value,
+        email: document.getElementById('email').value,
+        telephone: document.getElementById('telephone').value,
+        mot_de_passe: document.getElementById('mot_de_passe').value,
+        role: document.getElementById('role').value
+    };
+
+    try {
+        const res = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        alert(result.message);
+    } catch(err){
+        console.error(err);
+        alert("Erreur serveur");
+    }
+});
+</script>
+
+
+</body>
+</html>
+
+

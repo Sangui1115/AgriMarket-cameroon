@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Demandes de rencontre — Producteur</title>
+  <style>
+    body{font-family:Arial; margin:0; background:#0b1f2f; color:#eef6ff;}
+    header{padding:16px 18px; background:#071423; border-bottom:1px solid rgba(255,255,255,.12);}
+    .wrap{max-width:980px; margin:0 auto; padding:18px;}
+    .card{background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px; margin:12px 0;}
+    .row{display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between; align-items:center;}
+    .btn{border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#eef6ff; padding:10px 12px; border-radius:12px; font-weight:700; cursor:pointer;}
+    .btn.ok{background:#22c55e; border:none; color:#052012;}
+    .btn.no{background:#ff5d5d; border:none; color:#240707;}
+    .pill{padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.2);}
+    .muted{color:#b9c7de}
+  </style>
+</head>
+<body>
+  <header>
+    <b>AgriMarket Cameroon — Demandes de rencontre</b>
+  </header>
+
+  <div class="wrap">
+    <p class="muted">Ici, le producteur voit les demandes et peut accepter/refuser.</p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const API = "http://localhost:3000/api";
+    // ✅ Mets ton user_id réel ici (ou depuis localStorage)
+    const userId = Number(localStorage.getItem("user_id")) || 1;
+
+    async function load() {
+      const res = await fetch(`${API}/rencontres/producer/${userId}`);
+      const data = await res.json();
+
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      if (!Array.isArray(data) || data.length === 0) {
+        list.innerHTML = `<p class="muted">Aucune demande pour le moment.</p>`;
+        return;
+      }
+
+      data.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <div class="row">
+            <div>
+              <b>${r.produit || "Produit"}</b>
+              <div class="muted">Client: ${r.client_nom} • Date: ${r.date_rencontre}</div>
+            </div>
+            <span class="pill">Statut: <b>${r.statut}</b></span>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <button class="btn ok">Accepter</button>
+            <button class="btn no">Refuser</button>
+          </div>
+        `;
+
+        div.querySelector(".ok").onclick = () => updateStatus(r.id, "Acceptée");
+        div.querySelector(".no").onclick = () => updateStatus(r.id, "Refusée");
+        list.appendChild(div);
+      });
+    }
+
+    async function updateStatus(id, statut) {
+      const res = await fetch(`${API}/rencontres/update-status/${id}`, {
+        method:"PUT",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ statut })
+      });
+      const out = await res.json();
+      alert(out.message || "OK");
+      load();
+    }
+
+    load();
+  </script>
+</body>
+</html>
